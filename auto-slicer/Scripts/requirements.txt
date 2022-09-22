@@ -1,0 +1,5 @@
+pysimplegui
+pyperclip
+easygui
+pytube
+moviepy
