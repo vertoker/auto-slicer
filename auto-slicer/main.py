@@ -1,98 +1,109 @@
-import PySimpleGUI as gui
-import pyperclip as clipboard
-import easygui as gui2
 import threading as th
+import easygui as gui2
+import pyperclip as clipboard
+import PySimpleGUI as gui
+import random as rnd
 
 import staticdata
+import render
 
-layout = [
-	[gui.Text(key='seed_text'), gui.Button('', key='seed_replace'), gui.Button('', key='seed_delete'),
-    gui.Text('Language', key='language_text'), 
-    gui.Combo(staticdata.languages, default_value=staticdata.languages[0], key='language_select')],
-
-	#[gui.Text('Length of result video', key='video_result_length_text'), 
-    #gui.InputText('', key='video_result_length', enable_events=True),],
-
-	[gui.Text('Resolution', key='video_resolution_text'), 
-    gui.InputText('', size = (5, 1), key='video_resolution_width', enable_events=True),
-    gui.InputText('', size = (5, 1), key='video_resolution_heigth', enable_events=True),
-    gui.Combo(staticdata.resolution_templates, default_value=staticdata.resolution_templates[0], key='language_select')],
-
-    [],
+data = [
+	[rnd.randint(1000000000, 9999999999), (1920, 1080), 'G:\\Projects\\Python\\AutoSlicer\\result.mp4'],
+	[],
+	[]
 ]
 
-data = []
-
 updated = False
-
 gui.theme('DarkAmber')
-window = gui.Window('Конвертация видео в статью', layout)
+window = gui.Window('Auto Slicer', staticdata.layout)
+event, values = window.read()
 
 def logger(message):
 	window['logger'].update(value = message)
 
-def update(link):
+def render():
 	logger('Загрузка субтитров')
-	caption, name, language = sub.DownloadCaption(link)
+	#caption, name, language = sub.DownloadCaption(link)
 	logger('Форматирование текста')
-	dataText = tf.TextFormater(caption, language)
+	#dataText = tf.TextFormater(caption, language)
 	logger('Расстановка пунктуации нейросетью')
-	text = ai.PunctuationFormatter(dataText)
-	global data, updated
-	data = [text, name, caption]
+	#text = ai.PunctuationFormatter(dataText)
+	#global data, updated
+	#data = [text, name, caption]
 	logger('Текст готов')
 	updated = False
 
-def copy():
-	global data, updated
-	clipboard.copy(data[1] + '\n' + data[0])
-	logger('Текст скопирован')
-	updated = False
-
-def paste():
-	return clipboard.paste()
-
-def save():
-	global updated
-	if (data[1] != ''):
-		open(gui2.filesavebox(default = data[1] + '.txt'), 'w').write(data[0])
+def selectPathSave():
+	open(gui2.filesavebox(default = data[1] + '.txt'), 'w').write(data[0])
 	logger('Текст сохранён')
-	updated = False
 
-def save_subtitle():
-	global updated
-	if (data[1] != ''):
-		open(gui2.filesavebox(default = data[1] + ' sub.srt'), 'w').write(data[2])
-	logger('Файл субтитров сохранён')
-	updated = False
+def updateAll():
+	languageUpdate()
+	seedUpdate()
+	resolutionUpdate()
 
-def save_youtube_subtitle():
-	global updated
-	if (data[1] != ''):
-		open(gui2.filesavebox(default = data[1] + ' sbv.sbv'), 'w').write(sub.Caption2sbv(data[2]))
-	logger('Файл субтитров сохранён')
-	updated = False
+def languageUpdate():
+	global values
+	index = staticdata.languages.index(values['language_select'])
+	for key, value in staticdata.language_data.items():
+		window[key].update(value[index])
+
+def seedUpdate():
+	global data
+	window['seed_text'].update(data[0][0])
+
+def resolutionUpdate():
+	global data
+	window['video_resolution_width'].update(data[0][1][0])
+	window['video_resolution_heigth'].update(data[0][1][1])
+	window['video_resolution_select'].update(str(data[0][1][0]) + 'x' + str(data[0][1][1]))
+
+updateAll()
+
 
 while True:
 	event, values = window.read()
-	#print(event, values) #debug
+	print(event, values) #debug
 	if not updated:
 		if event in (None, 'Exit', 'Cancel'):
 			break
-		if event == 'submit':
+		if event == 'render':
 			updated = True
-			updater = th.Thread(target = update, args = [values['link']])
+			updater = th.Thread(target = render)
 			updater.start()
-		if event == 'copy':
-			updated = True
-			copy()
-		if event == 'paste':
-			window['link'].update(paste())
-		if event == 'save':
-			save()
-		if event == 'save-subtitle':
-			updated = True
-			save_subtitle()
-		if event == 'save-youtube-subtitle':
-			updated = True
-			save_youtube_subtitle()
+		# Основное
+		if event == 'language_select':
+			languageUpdate()
+		if event == 'seed_refresh':
+			data[0][0] = rnd.randint(1000000000, 9999999999)
+			seedUpdate()
+			logger('Text refreshed')
+		if event == 'seed_copy':
+			clipboard.copy(data[0][0])
+			logger('Text copied')
+		if event == 'video_resolution_width':
+			data[0][1] = (values['video_resolution_width'], values['video_resolution_heigth'])
+			resolutionUpdate()
+		if event == 'video_resolution_heigth':
+			data[0][1] = (values['video_resolution_width'], values['video_resolution_heigth'])
+			resolutionUpdate()
+		if event == 'video_resolution_select':
+			data[0][1] = values['video_resolution_select'].split('x')
+			resolutionUpdate()
+		# Видео
+		if event == '':
+			pass
+		if event == '':
+			pass
+		if event == '':
+			pass
+		if event == '':
+			pass
+		if event == '':
+			pass
+		if event == '':
+			pass
+		if event == '':
+			pass
+		if event == '':
+			pass

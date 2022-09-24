@@ -3,3 +3,4 @@ pyperclip
 easygui
 pytube
 moviepy
+pyfastnoisesimd

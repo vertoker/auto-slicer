@@ -1,3 +1,6 @@
+from tkinter import DISABLED
+import PySimpleGUI as gui
+
 languages = [
     'English', 'Русский'
 ]
@@ -7,6 +10,95 @@ resolution_templates = [
     '1600x900', '900x1600',
     '1280x720', '720x1280',
     '1080x1080', '1920x1920'
+]
+
+language_data = {
+    'language_text': ('Language', 'Язык'),
+    'seed_refresh': ('Refresh', 'Обновить'),
+    'seed_copy': ('Copy', 'Скопировать'),
+    'video_resolution_text': ('Resolution', 'Разрешение'),
+    'video_path_text': ('Video path', 'Путь к видео'),
+    'video_path_button': ('Search', 'Найти'),
+    'video_slice_input': ('Slice video?', 'Нарезать видео?'),
+    'audio_mute_input': ('Audio mute?', 'Без звука?'),
+    'min_slice_length_checkbox': ('Min slice length', 'Минимальная длина фрагмента нарезки'),
+    'max_slice_length_checkbox': ('Max slice length', 'Максимальная длина фрагмента нарезки'),
+    'start_video_text': ('Start video', 'Начало видео'),
+    'end_video_text': ('End video', 'Конец видео'),
+    'audio_path_text': ('Audio path', 'Путь к аудио'),
+    'audio_path_button': ('Search', 'Найти'),
+    'start_audio_text': ('Start audio', 'Начало аудио'),
+    'end_audio_text': ('End audio', 'Конец аудио'),
+    'audio_fade_in_checkbox': ('Fade in', 'Появление'),
+    'audio_fade_out_checkbox': ('Fade out', 'Затухание'),
+    'result_video_path_text': ('Result video path', 'Путь к экспорту готового видео'),
+    'result_video_path_button': ('Search', 'Найти'),
+    'render': ('Render', 'Рендер')
+}
+
+language_data_logger = {
+    '': ('', ''),
+    '': ('', ''),
+    '': ('', ''),
+    '': ('', ''),
+    '': ('', ''),
+    '': ('', ''),
+    '': ('', ''),
+}
+
+layout = [
+	# Основные параметры
+    [gui.Text('Language', key='language_text'), 
+    gui.Combo(languages, default_value=languages[0], key='language_select', enable_events=True)],
+	[gui.Text('1234567890', size = (10, 1), key='seed_text'), 
+    gui.Button('Refresh', key='seed_refresh'), 
+    gui.Button('Copy', key='seed_copy')],
+
+	#[gui.Text('Length of result video', key='video_result_length_text'), 
+    #gui.InputText('', key='video_result_length', enable_events=True),],
+
+	[gui.Text('Resolution', key='video_resolution_text'), 
+    gui.InputText('', size = (5, 1), key='video_resolution_width', enable_events=True),
+    gui.InputText('', size = (5, 1), key='video_resolution_heigth', enable_events=True),
+    gui.Combo(resolution_templates, default_value=resolution_templates[0], key='video_resolution_select', enable_events=True)],
+
+	# Видео параметры
+    [gui.Text('Video path', key='video_path_text', enable_events=True), 
+    gui.Input('', key='video_path_input', enable_events=True),
+    gui.Button('Search', key='video_path_button', enable_events=True)],
+    [gui.Checkbox('Slice video?', key='video_slice_input', enable_events=True),
+    gui.Checkbox('Audio mute?', key='audio_mute_input', enable_events=True)],
+
+    [gui.Checkbox('Min slice length', key='min_slice_length_checkbox', enable_events=True), 
+    gui.InputText('3', size = (5, 1), key='min_slice_length_input', enable_events=True)],
+    [gui.Checkbox('Max slice length', key='max_slice_length_checkbox', enable_events=True), 
+    gui.InputText('20', size = (5, 1), key='max_slice_length_input', enable_events=True)],
+
+    [gui.Text('Start video', key='start_video_text'), 
+    gui.InputText('', size = (5, 1), key='start_video_input', enable_events=True),
+    gui.Text('End video', key='end_video_text'), 
+    gui.InputText('', size = (5, 1), key='end_video_input', enable_events=True)],
+
+	# Аудио параметры
+    [gui.Text('Audio path', key='audio_path_text', enable_events=True), 
+    gui.Input('', key='audio_path_input', enable_events=True),
+    gui.Button('Search', key='audio_path_button', enable_events=True)],
+    [gui.Text('Start audio', key='start_audio_text'), 
+    gui.InputText('', size = (5, 1), key='start_audio_input', enable_events=True),
+    gui.Text('End audio', key='end_audio_text'), 
+    gui.InputText('', size = (5, 1), key='end_audio_input', enable_events=True)],
+
+    [gui.Checkbox('Fade in', key='audio_fade_in_checkbox', enable_events=True), 
+    gui.InputText('0', size = (5, 1), key='audio_fade_in_input', enable_events=True),
+    gui.Checkbox('Fade out', key='audio_fade_out_checkbox', enable_events=True), 
+    gui.InputText('0', size = (5, 1), key='audio_fade_out_input', enable_events=True)],
+
+    [gui.Text('Result video path', key='result_video_path_text', enable_events=True), 
+    gui.Input('', key='result_video_path_input', enable_events=True),
+    gui.Button('Search', key='result_video_path_button', enable_events=True)],
+
+    [gui.Text('', size = (30, 1), key='logger', enable_events=True),
+    gui.Button('Render', key='render')]
 ]
 
 # 0 - Основные данные для видео
